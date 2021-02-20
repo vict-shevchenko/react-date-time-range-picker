@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Calendar from './Calendar.js';
 import { rangeShape } from './DayCell';
 import { findNextRangeIndex, generateStyles } from '../utils.js';
-import { isBefore, differenceInCalendarDays, addDays, min, isWithinInterval, max } from 'date-fns';
+import { isBefore, differenceInCalendarDays, addDays, min } from 'date-fns';
 import classnames from 'classnames';
 import coreStyles from '../styles';
 
@@ -15,14 +15,17 @@ class DateRange extends Component {
     this.updatePreview = this.updatePreview.bind(this);
     this.calcNewSelection = this.calcNewSelection.bind(this);
     this.state = {
-      focusedRange: props.initialFocusedRange || [findNextRangeIndex(props.ranges), 0],
+      focusedRange: props.initialFocusedRange || [
+        findNextRangeIndex(props.ranges),
+        0,
+      ],
       preview: null,
     };
     this.styles = generateStyles([coreStyles, props.classNames]);
   }
-  calcNewSelection(value, isSingleValue = true) {
+  calcNewSelection(value, isSingleValue = true, focusChange = true) {
     const focusedRange = this.props.focusedRange || this.state.focusedRange;
-    const { ranges, onChange, maxDate, moveRangeOnFirstSelection, disabledDates } = this.props;
+    const { ranges, onChange, maxDate, moveRangeOnFirstSelection } = this.props;
     const focusedRangeIndex = focusedRange[0];
     const selectedRange = ranges[focusedRangeIndex];
     if (!selectedRange || !onChange) return {};
@@ -33,6 +36,9 @@ class DateRange extends Component {
     if (!isSingleValue) {
       startDate = value.startDate;
       endDate = value.endDate;
+      if (!focusChange) {
+        nextFocusRange = focusedRange;
+      }
     } else if (focusedRange[1] === 0) {
       // startDate selection
       const dayOffset = differenceInCalendarDays(endDate, startDate);
@@ -43,46 +49,34 @@ class DateRange extends Component {
     } else {
       endDate = value;
     }
-
     // reverse dates if startDate before endDate
-    let isStartDateSelected = focusedRange[1] === 0;
     if (isBefore(endDate, startDate)) {
-      isStartDateSelected = !isStartDateSelected;
       [startDate, endDate] = [endDate, startDate];
     }
 
-    const inValidDatesWithinRange = disabledDates.filter(disabledDate =>
-      isWithinInterval(disabledDate, {
-        start: startDate,
-        end: endDate,
-      })
-    );
-
-    if (inValidDatesWithinRange.length > 0) {
-      if (isStartDateSelected) {
-        startDate = addDays(max(inValidDatesWithinRange), 1);
-      } else {
-        endDate = addDays(min(inValidDatesWithinRange), -1);
-      }
-    }
-
     if (!nextFocusRange) {
-      const nextFocusRangeIndex = findNextRangeIndex(this.props.ranges, focusedRange[0]);
+      const nextFocusRangeIndex = findNextRangeIndex(
+        this.props.ranges,
+        focusedRange[0]
+      );
       nextFocusRange = [nextFocusRangeIndex, 0];
     }
     return {
-      wasValid: !(inValidDatesWithinRange.length > 0),
       range: { startDate, endDate },
       nextFocusRange: nextFocusRange,
     };
   }
-  setSelection(value, isSingleValue) {
+  setSelection(value, isSingleValue, focusChange) {
     const { onChange, ranges, onRangeFocusChange } = this.props;
     const focusedRange = this.props.focusedRange || this.state.focusedRange;
     const focusedRangeIndex = focusedRange[0];
     const selectedRange = ranges[focusedRangeIndex];
     if (!selectedRange) return;
-    const newSelection = this.calcNewSelection(value, isSingleValue);
+    const newSelection = this.calcNewSelection(
+      value,
+      isSingleValue,
+      focusChange
+    );
     onChange({
       [selectedRange.key || `range${focusedRangeIndex + 1}`]: {
         ...selectedRange,
@@ -97,7 +91,8 @@ class DateRange extends Component {
   }
   handleRangeFocusChange(focusedRange) {
     this.setState({ focusedRange });
-    this.props.onRangeFocusChange && this.props.onRangeFocusChange(focusedRange);
+    this.props.onRangeFocusChange &&
+      this.props.onRangeFocusChange(focusedRange);
   }
   updatePreview(val) {
     if (!val) {
@@ -106,8 +101,9 @@ class DateRange extends Component {
     }
     const { rangeColors, ranges } = this.props;
     const focusedRange = this.props.focusedRange || this.state.focusedRange;
-    const color = ranges[focusedRange[0]].color || rangeColors[focusedRange[0]] || color;
-    this.setState({ preview: { ...val.range, color } });
+    const color =
+      ranges[focusedRange[0]].color || rangeColors[focusedRange[0]] || color;
+    this.setState({ preview: { ...val, color } });
   }
   render() {
     return (
@@ -116,13 +112,18 @@ class DateRange extends Component {
         onRangeFocusChange={this.handleRangeFocusChange}
         preview={this.state.preview}
         onPreviewChange={value => {
-          this.updatePreview(value ? this.calcNewSelection(value) : null);
+          this.updatePreview(value ? this.calcNewSelection(value).range : null);
         }}
         {...this.props}
         displayMode="dateRange"
-        className={classnames(this.styles.dateRangeWrapper, this.props.className)}
+        className={classnames(
+          this.styles.dateRangeWrapper,
+          this.props.className
+        )}
         onChange={this.setSelection}
-        updateRange={val => this.setSelection(val, false)}
+        updateRange={(val, focusChange) =>
+          this.setSelection(val, false, focusChange)
+        }
         ref={target => {
           this.calendar = target;
         }}
@@ -135,8 +136,7 @@ DateRange.defaultProps = {
   classNames: {},
   ranges: [],
   moveRangeOnFirstSelection: false,
-  rangeColors: ['#3d91ff', '#3ecf8e', '#fed14c'],
-  disabledDates: [],
+  rangeColors: ['#0077C8', '#3ecf8e', '#fed14c'],
 };
 
 DateRange.propTypes = {
