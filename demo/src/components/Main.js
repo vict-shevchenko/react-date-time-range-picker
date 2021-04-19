@@ -222,6 +222,33 @@ export default class Main extends Component {
           </div>
         </Section>
 
+        <Section title="DateRangePicker - 2 month with no Defined Ranges">
+          <div>
+            <input
+              type="text"
+              readOnly
+              value={formatDateDisplay(this.state.dateRangePicker.selection.startDate)}
+            />
+            <input
+              type="text"
+              readOnly
+              value={formatDateDisplay(this.state.dateRangePicker.selection.endDate)}
+            />
+          </div>
+          <div>
+            <DateRangePicker
+              onChange={this.handleRangeChange.bind(this, 'dateRangePicker')}
+              showSelectionPreview={true}
+              moveRangeOnFirstSelection={false}
+              className={'PreviewArea'}
+              months={2}
+              ranges={[this.state.dateRangePicker.selection]}
+              direction="horizontal"
+              showDefinedRange={false}
+            />
+          </div>
+        </Section>
+
         <Section title="DateRangePicker - Vertical Infinite">
           <div>
             <input
