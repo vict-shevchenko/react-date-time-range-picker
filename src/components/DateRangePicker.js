@@ -11,14 +11,15 @@ class DateRangePicker extends Component {
     super(props);
     this.state = {
       focusedRange: [findNextRangeIndex(props.ranges), 0],
+      showDefinedRange: props.showDefinedRange,
     };
     this.styles = generateStyles([coreStyles, props.classNames]);
   }
 
   render() {
     /**
-     * Here I am intercepting the normal unified onChange that gets passed 
-     * in and am attaching a label property (i.e. "Last 4 Hours") if the 
+     * Here I am intercepting the normal unified onChange that gets passed
+     * in and am attaching a label property (i.e. "Last 4 Hours") if the
      * event came from the list of predefined ranges.
      */
     const specialHandleChange = (event, label) => {
@@ -30,13 +31,18 @@ class DateRangePicker extends Component {
       this.props.onChange(event);
     };
 
-    const { focusedRange } = this.state;
+    const { focusedRange, showDefinedRange } = this.state;
     return (
-      <div className={classnames(this.styles.dateRangePickerWrapper, this.props.className)}>
-        { this.props.showDefinedRange !== false ? (
+      <div
+        className={classnames(
+          this.styles.dateRangePickerWrapper,
+          this.props.className
+        )}
+      >
+        {showDefinedRange !== false ? (
           <DefinedRange
             focusedRange={focusedRange}
-            onPreviewChange={value => this.dateRange.updatePreview(value)}
+            onPreviewChange={(value) => this.dateRange.updatePreview(value)}
             {...this.props}
             range={this.props.ranges[focusedRange[0]]}
             className={undefined}
@@ -45,11 +51,11 @@ class DateRangePicker extends Component {
           />
         ) : null}
         <DateRange
-          onRangeFocusChange={focusedRange => this.setState({ focusedRange })}
+          onRangeFocusChange={(focusedRange) => this.setState({ focusedRange })}
           focusedRange={focusedRange}
           {...this.props}
           onChange={specialHandleChange}
-          ref={t => (this.dateRange = t)}
+          ref={(t) => (this.dateRange = t)}
           className={undefined}
         />
       </div>
@@ -57,12 +63,13 @@ class DateRangePicker extends Component {
   }
 }
 
-DateRangePicker.defaultProps = {};
+DateRangePicker.defaultProps = { showDefinedRange: true };
 
 DateRangePicker.propTypes = {
   ...DateRange.propTypes,
   ...DefinedRange.propTypes,
   className: PropTypes.string,
+  showDefinedRange: PropTypes.bool,
 };
 
 export default DateRangePicker;
