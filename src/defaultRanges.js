@@ -14,6 +14,27 @@ import {
   isSameDay,
   differenceInCalendarDays,
 } from 'date-fns';
+import i18n from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
+i18n.use(LanguageDetector).init({
+  fallbackLng: 'en',
+  interpolation: {
+    escapeValue: false, // React already provides escaping
+  },
+  resources: {
+    en: {
+      translation: {
+        arrayLastHours: ['Last', '{{number}}', 'Hours'],
+        arrayLastDays: ['Last', '{{number}}', 'Days'],
+        lastHour: 'Last Hour',
+        lastMonth: 'Last Month',
+        monthToDate: 'Month to Date',
+        yearToDate: 'Year to Date',
+      },
+    },
+  },
+});
 
 const defineds = {
   now: new Date(),
@@ -75,76 +96,76 @@ export const defaultStaticRanges = createStaticRanges([
   //   }),
   // },
   {
-    label: 'Last Hour',
+    label: i18n.t('lastHour'),
     range: () => ({
       startDate: defineds.lastHour,
       endDate: defineds.now,
     }),
   },
   {
-    label: 'Last 4 Hours',
+    label: i18n.t('arrayLastHours', { number: '4', joinArrays: ' ' }),
     range: () => ({
       startDate: defineds.lastFourHours,
       endDate: defineds.now,
     }),
   },
   {
-    label: 'Last 8 Hours',
+    label: i18n.t('arrayLastHours', { number: '8', joinArrays: ' ' }),
     range: () => ({
       startDate: defineds.lastEightHours,
       endDate: defineds.now,
     }),
   },
   {
-    label: 'Last 24 Hours',
+    label: i18n.t('arrayLastHours', { number: '24', joinArrays: ' ' }),
     range: () => ({
       startDate: defineds.lastTwentyFourHours,
       endDate: defineds.now,
     }),
   },
   {
-    label: 'Last 7 Days',
+    label: i18n.t('arrayLastDays', { number: '7', joinArrays: ' ' }),
     range: () => ({
       startDate: defineds.lastSevenDays,
       endDate: defineds.now,
     }),
   },
   {
-    label: 'Last 30 Days',
+    label: i18n.t('arrayLastDays', { number: '30', joinArrays: ' ' }),
     range: () => ({
       startDate: defineds.lastThirtyDays,
       endDate: defineds.now,
     }),
   },
 
-  // {
-  //   label: 'Last 365 Days',
-  //   range: () => ({
-  //     startDate: defineds.lastYear,
-  //     endDate: defineds.now,
-  //   }),
-  // },
   {
-    label: 'Month to Date',
+    label: i18n.t('arrayLastDays', { number: '365', joinArrays: ' ' }),
+    range: () => ({
+      startDate: defineds.lastYear,
+      endDate: defineds.now,
+    }),
+  },
+  {
+    label: i18n.t('monthToDate'),
     range: () => ({
       startDate: defineds.startOfMonth,
       endDate: defineds.now,
     }),
   },
-  // {
-  //   label: 'Year to Date',
-  //   range: () => ({
-  //     startDate: defineds.startOfYear,
-  //     endDate: defineds.now,
-  //   }),
-  // },
-  // {
-  //   label: 'Last Month',
-  //   range: () => ({
-  //     startDate: defineds.startOfLastMonth,
-  //     endDate: defineds.endOfLastMonth,
-  //   }),
-  // },
+  {
+    label: i18n.t('yearToDate'),
+    range: () => ({
+      startDate: defineds.startOfYear,
+      endDate: defineds.now,
+    }),
+  },
+  {
+    label: i18n.t('lastMonth'),
+    range: () => ({
+      startDate: defineds.startOfLastMonth,
+      endDate: defineds.endOfLastMonth,
+    }),
+  },
 ]);
 
 export const defaultInputRanges = [
