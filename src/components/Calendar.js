@@ -266,7 +266,9 @@ class Calendar extends PureComponent {
                   type={showTime ? 'time' : 'hidden'}
                   value={this.formatTimeDisplay(range.startDate)}
                   onChange={evt => {
-                    this.updateTime(evt.target.value, range.startDate, range.endDate, 0);
+                    if (evt.target.value !== '') {
+                      this.updateTime(evt.target.value, range.startDate, range.endDate, 0);
+                    }
                   }}
                   required={showTime ? true : false}
                 />
@@ -286,7 +288,9 @@ class Calendar extends PureComponent {
                   type={showTime ? 'time' : 'hidden'}
                   value={this.formatTimeDisplay(range.endDate)}
                   onChange={evt => {
-                    this.updateTime(evt.target.value, range.startDate, range.endDate, 1);
+                    if (evt.target.value !== '') {
+                      this.updateTime(evt.target.value, range.startDate, range.endDate, 1);
+                    }
                   }}
                   required={showTime ? true : false}
                 />
