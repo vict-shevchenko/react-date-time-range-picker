@@ -1,6 +1,6 @@
 {
   "name": "@opsramp/react-date-time-range-picker",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "A React component for choosing date and time ranges.",
   "main": "dist/index.js",
   "scripts": {
@@ -38,9 +38,9 @@
     "date-fns": "2.0.0-alpha.7",
     "i18next": "^20.3.1",
     "i18next-browser-languagedetector": "^6.1.1",
-    "postcss": "7.0.27",
-    "postcss-cli": "7.1.0",
-    "prop-types": "15.5.10",
+    "postcss": "8.5.3",
+    "postcss-cli": "11.0.0",
+    "prop-types": "15.8.1",
     "react-list": "0.8.18"
   },
   "peerDependencies": {
