@@ -40,7 +40,7 @@
     "i18next-browser-languagedetector": "^6.1.1",
     "postcss": "8.5.3",
     "postcss-cli": "11.0.0",
-    "prop-types": "15.5.10",
+    "prop-types": "15.8.1",
     "react-list": "0.8.18"
   },
   "peerDependencies": {
