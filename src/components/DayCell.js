@@ -194,7 +194,7 @@ class DayCell extends Component {
         {this.renderSelectionPlaceholders()}
         {this.renderPreviewPlaceholder()}
         <span className={styles.dayNumber}>
-          <span>{format(this.props.day, "D")}</span>
+          <span>{format(this.props.day, "d")}</span>
         </span>
       </button>
     );
