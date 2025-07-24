@@ -5,15 +5,25 @@ import {
   DateRangePicker,
   DefinedRange,
 } from "../../../src";
-import * as rdrLocales from "../../../src/locale";
 import { format, addDays } from "date-fns";
 import Section from "./Section";
+
+import "normalize.css";
+import "../styles/global.css";
+import "../styles/main.css";
+
+import "../../../src/styles.scss";
+import "../../../src/theme/default.scss";
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 function renderStaticRangeLabel(staticRange) {
   return (
     <CustomStaticRangeLabelContent text={"This is a custom label content: "} />
   );
 }
+
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+// const timeZone = "America/New_York";
 
 class CustomStaticRangeLabelContent extends React.Component {
   constructor(props) {
@@ -51,66 +61,14 @@ class CustomStaticRangeLabelContent extends React.Component {
   }
 }
 
-const nameMapper = {
-  ar: "Arabic (Modern Standard Arabic - Al-fussha)",
-  bg: "Bulgarian",
-  ca: "Catalan",
-  cs: "Czech",
-  da: "Danish",
-  de: "German",
-  el: "Greek",
-  enGB: "English (United Kingdom)",
-  enUS: "English (United States)",
-  eo: "Esperanto",
-  es: "Spanish",
-  fi: "Finnish",
-  fil: "Filipino",
-  frCH: "French",
-  fr: "French",
-  hr: "Croatian",
-  id: "Indonesian",
-  is: "Icelandic",
-  it: "Italian",
-  ja: "Japanese",
-  ko: "Korean",
-  mk: "Macedonian",
-  nb: "Norwegian Bokmål",
-  nl: "Dutch",
-  pl: "Polish",
-  pt: "Portuguese",
-  ro: "Romanian",
-  ru: "Russian",
-  sk: "Slovak",
-  sv: "Swedish",
-  th: "Thai",
-  tr: "Turkish",
-  ua: "Ukrainian",
-  vi: "Vietnamese",
-  zhCN: "Chinese Simplified",
-  zhTW: "Chinese Traditional",
-};
-
-const localeOptions = Object.keys(rdrLocales).map((key) => ({
-  value: key,
-  label: `${key} - ${nameMapper[key] || ""}`,
-}));
-
-import "normalize.css";
-import "../styles/global.css";
-import "../styles/main.css";
-
-import "../../../src/styles.scss";
-import "../../../src/theme/default.scss";
-
 function formatDateDisplay(date, defaultText) {
   if (!date) return defaultText;
-  return format(date, "MM/DD/YYYY");
+  return format(date, "P");
 }
 
 export default class Main extends Component {
   constructor(props, context) {
     super(props, context);
-
     this.state = {
       dateRange: {
         selection: {
@@ -168,8 +126,8 @@ export default class Main extends Component {
       locale: "ja",
       dateRangePicker: {
         selection: {
-          startDate: new Date(),
-          endDate: addDays(new Date(), 7),
+          startDate: utcToZonedTime(new Date(), timeZone),
+          endDate: utcToZonedTime(addDays(new Date(), 7), timeZone),
           key: "selection",
         },
       },
@@ -224,6 +182,10 @@ export default class Main extends Component {
               months={2}
               ranges={[this.state.dateRangePicker.selection]}
               direction="horizontal"
+              showTime={true}
+              timeZone={timeZone}
+              time24hFormat={true}
+              dateFormat={"MMM yyyy"}
             />
           </div>
         </Section>
@@ -361,32 +323,6 @@ export default class Main extends Component {
               this.state.multipleRanges.selection2,
               this.state.multipleRanges.selection3,
             ]}
-            className={"PreviewArea"}
-          />
-        </Section>
-
-        <Section title="DatePicker - Internationalization">
-          <div>
-            <select
-              onChange={(e) => this.setState({ locale: e.target.value })}
-              value={this.state.locale}
-            >
-              {localeOptions.map((option, i) => (
-                <option value={option.value} key={i}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              readOnly
-              value={formatDateDisplay(this.state.datePickerInternational)}
-            />
-          </div>
-          <Calendar
-            locale={rdrLocales[this.state.locale]}
-            date={this.state.datePickerInternational}
-            onChange={this.handleChange.bind(this, "datePickerInternational")}
             className={"PreviewArea"}
           />
         </Section>
