@@ -64,8 +64,7 @@ function InputTimeZoned(props) {
       <input
         {...props}
         type="text"
-        className="ops-text-grey-800 placeholder-gray-600 ops-elevation-20"
-        style={{ border: '1px solid var(--color-elevation-40)', width: '100%'}}
+        className="ops-text-grey-800 ops-elevation-20 rounded-md w-full"
         name="time"
         value={undefined} // Value needs to be undefined to avoid uncontrolled input warning
         onChange={props.onChange}
