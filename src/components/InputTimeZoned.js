@@ -1,18 +1,21 @@
 import React from "react";
 import { format, addMinutes } from "date-fns";
-import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 import { useMemo } from "react";
 
 function InputTimeZoned(props) {
-  const timeZone = props.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const dateFormat = props.dateFormat || "P";
-  const timeFormat = props.time24hFormat ? "hh:mm" : "HH:mm";
+  const {
+    timeZone: _timeZone,
+    dateFormat = "P",
+    time24hFormat,
+    ...rest
+  } = props;
+  const timeFormat = time24hFormat ? "hh:mm" : "HH:mm";
   function handleFocus(e) {
     const focusType = props.type || "time";
     e.target.type = focusType;
     let value = props.value;
     if (!value) {
-      const now = utcToZonedTime(new Date(), timeZone);
+      const now = new Date();
       if (focusType === "date") {
         value = format(addMinutes(now, 1), dateFormat);
       } else {
@@ -33,10 +36,7 @@ function InputTimeZoned(props) {
     if (props.value) {
       const dateTime = props.value;
       if (props.type === "date") {
-        // dateTime needs to be translated to UTC and then to the timezone
-        // to get the correct date with the local parser
-        const zoned = utcToZonedTime(dateTime, timeZone);
-        value = format(zoned, "P");
+        value = format(dateTime, dateFormat);
       } else {
         if (props.time24hFormat) {
           return dateTime;
@@ -50,19 +50,24 @@ function InputTimeZoned(props) {
             const fixed = parsedHours.toString().padStart(2, "0");
             value = `${fixed}:${minutes} PM`;
           } else {
-                   value = `${hours}:${minutes} AM`;
-                 }
+            value = `${hours}:${minutes} AM`;
+          }
         }
       }
     }
     return value;
-  }, [props.value, props.placeholder, props.type, timeZone]);
+  }, [props.value, props.placeholder, props.type]);
 
   return (
-    <div style={{ flex: 1, width: '100%' }}>
-      {props.label && <label className="ops-dropdown__label">{props.label} {props.required && <span className="ops-text-red">*</span>}</label>}
+    <div style={{ flex: 1, width: "100%" }}>
+      {props.label && (
+        <label className="ops-dropdown__label">
+          {props.label}{" "}
+          {props.required && <span className="ops-text-red">*</span>}
+        </label>
+      )}
       <input
-        {...props}
+        {...rest}
         type="text"
         className="ops-text-grey-800 ops-elevation-20 rounded-md w-full"
         name="time"
