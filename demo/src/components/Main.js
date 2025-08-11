@@ -22,8 +22,9 @@ function renderStaticRangeLabel(staticRange) {
   );
 }
 
-const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-// const timeZone = "America/New_York";
+// const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const timeZone = "Pacific/Auckland"; // Example timezone, can be changed
+// const timeZone = "Pacific/Kiritimati"; // Example timezone, can be changed
 
 class CustomStaticRangeLabelContent extends React.Component {
   constructor(props) {
@@ -126,8 +127,8 @@ export default class Main extends Component {
       locale: "ja",
       dateRangePicker: {
         selection: {
-          startDate: utcToZonedTime(new Date(), timeZone),
-          endDate: utcToZonedTime(addDays(new Date(), 7), timeZone),
+          startDate: new Date(),
+          endDate: addDays(new Date(), 7),
           key: "selection",
         },
       },
@@ -142,7 +143,6 @@ export default class Main extends Component {
   }
 
   handleRangeChange(which, payload) {
-    // console.log(which, payload);
     this.setState({
       [which]: {
         ...this.state[which],
@@ -156,7 +156,7 @@ export default class Main extends Component {
       <main className={"Main"}>
         <h1 className={"Title"}>React-date-range</h1>
 
-        <Section title="DateRangePicker - 2 month">
+        <Section title={`DateRangePicker - 2 month (${timeZone})`}>
           <div>
             <input
               type="text"
@@ -186,11 +186,14 @@ export default class Main extends Component {
               timeZone={timeZone}
               time24hFormat={true}
               dateFormat={"MMM yyyy"}
+              minDate={new Date()}
             />
           </div>
         </Section>
 
-        <Section title="DateRangePicker - 2 month with no Defined Ranges">
+        <Section
+          title={`DateRangePicker - 2 month with no Defined Ranges (America/New_York)`}
+        >
           <div>
             <input
               type="text"
@@ -217,6 +220,7 @@ export default class Main extends Component {
               ranges={[this.state.dateRangePicker.selection]}
               direction="horizontal"
               showDefinedRange={false}
+              timeZone="America/New_York"
             />
           </div>
         </Section>
