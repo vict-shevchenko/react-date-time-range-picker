@@ -428,13 +428,29 @@ class Calendar extends PureComponent {
   updateTime(time, start, end, index) {
     const { updateRange } = this.props;
     var values = time.split(":");
-    if (index === 0) {
-      start.setHours(values[0]);
-      start.setMinutes(values[1]);
-    } else {
-      end.setHours(values[0]);
-      end.setMinutes(values[1]);
+
+    const hours = parseInt(values[0], 10);
+    const minutes = parseInt(values[1], 10);
+
+    if (
+      isNaN(hours) ||
+      isNaN(minutes) ||
+      hours < 0 ||
+      hours > 23 ||
+      minutes < 0 ||
+      minutes > 59
+    ) {
+      return;``
     }
+
+    if (index === 0) {
+      start.setHours(hours);
+      start.setMinutes(minutes);
+    } else {
+      end.setHours(hours);
+      end.setMinutes(minutes);
+    }
+
     const newRange = {
       startDate: start,
       endDate: end,

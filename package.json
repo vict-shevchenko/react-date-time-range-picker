@@ -1,6 +1,6 @@
 {
   "name": "@opsramp/react-date-time-range-picker",
-  "version": "1.0.39",
+  "version": "1.0.40",
   "description": "A React component for choosing date and time ranges.",
   "main": "dist/index.js",
   "scripts": {
